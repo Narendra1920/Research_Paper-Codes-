@@ -1,32 +1,40 @@
 #include <iostream>
 #include <thread>
-#include <chrono>
+#include <vector>
 
-// Function representing a time-consuming task
-void timeConsumingTask() {
-    // Simulate a time-consuming task
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    std::cout << "Task completed!" << std::endl;
-}
+// Function representing an independent task (module)
+void moduleFunction(int moduleId) {
+    std::cout << "Module " << moduleId << " is starting." << std::endl;
 
-int main() {
-    // Create a thread for the time-consuming task
-    std::thread taskThread(timeConsumingTask);
-
-    // Inform the user that the task is running
-    std::cout << "Task is running in the background. Please wait..." << std::endl;
-
-    // Do some other work in the main thread (simulating responsiveness)
+    // Simulate some module-specific work
     for (int i = 0; i < 5; ++i) {
-        std::cout << "Main thread doing some work..." << std::endl;
+        std::cout << "Module " << moduleId << " is working..." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    // Wait for the task thread to finish
-    taskThread.join();
+    std::cout << "Module " << moduleId << " is completed." << std::endl;
+}
 
-    // Inform the user that the task is completed
-    std::cout << "Main thread: Task completed in the background." << std::endl;
+int main() {
+    // Create threads for each module
+    std::vector<std::thread> threads;
+
+    // Define the number of modules
+    const int numModules = 3;
+
+    // Launch threads for each module
+    for (int i = 1; i <= numModules; ++i) {
+        threads.push_back(std::thread(moduleFunction, i));
+    }
+
+    // Wait for all threads to finish
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    std::cout << "Main thread: All modules are completed." << std::endl;
 
     return 0;
 }
+
+ 
